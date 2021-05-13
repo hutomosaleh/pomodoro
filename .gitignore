@@ -130,3 +130,6 @@ dmypy.json
 
 # IDE Cache
 .vscode
+
+# Test python codes
+scrap.py
