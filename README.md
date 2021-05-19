@@ -10,6 +10,14 @@ Discord Bot for tracking our study hours
 pip install -r requirements.txt
 ```
 
+### 2. Make .env file
+
+Inside should contain
+```bash
+DISCORD_TOKEN=<your_bot_token>
+MONGODB_TOKEN=<your_mongodb_token>
+```
+
 ## 🧀 Usage
 
 ```bash
