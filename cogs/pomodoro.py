@@ -24,6 +24,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
 
     @commands.command(aliases=['info'], help='Show study stats')
     async def stats(self, ctx):
+        update_info(ctx)
         user_id = ctx.message.author.id
         user = await self.db.find_one({"user_id": user_id})
         time_today = round(user['date_logged'][-1][1])
@@ -90,7 +91,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
                         await self.db.update_one({"user_id": member.id}, {"$pop": {'date_logged': 1}})
                         await self.db.update_one({"user_id": member.id}, {"$push": {'date_logged': new_time}})
                         await self.bot.get_channel(844625911411245117).send(f"{member.name} studied for {delta_time} minutes!")
-                    await self.db.update_one({"user_id": member.id}, {"$set": {'studying': True}})
+                    await self.db.update_one({"user_id": member.id}, {"$set": {'studying': False}})
 
 def setup(bot):
     bot.add_cog(PomodoroCog(bot))
