@@ -12,7 +12,6 @@ TOKEN = os.getenv('MONGODB_TOKEN')
 tz = pytz.timezone('Europe/Berlin')
 channel_id = [435126680722604036, 780238348802981928, 780238348802981929]
 BOT_CHANNEL = 844625911411245117
-BOT_CHANNEL = 746990302459592804
 
 
 class PomodoroCog(commands.Cog, name='Main Commands'):
