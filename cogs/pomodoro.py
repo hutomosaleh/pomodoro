@@ -68,11 +68,11 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
         if after.channel:
             if after.channel.id in channel_id:
                 await self.start_study_session(member.id)
-        else:
-            if before.channel.id in channel_id:
-                user = await self.db.find_one({"user_id": member.id})
-                if user['studying'] is True:
-                    await self.finish_study_session(user)
+            else:
+                if before.channel.id in channel_id:
+                    user = await self.db.find_one({"user_id": member.id})
+                    if user['studying'] is True:
+                        await self.finish_study_session(user)
 
     async def check_vc(self, id):  # channel is ALWAYS empty when starting a bot
         members = self.bot.get_channel(id).members
@@ -102,6 +102,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
         new_time[1] += delta_time
         if delta_time > 1:
             await self.db.update_one({"user_id": user['user_id']}, {"$inc": {'total_time': delta_time}})
+            await self.db.update_one({"user_id": user['user_id']}, {"$inc": {'total_time_today': delta_time}})
             await self.db.update_one({"user_id": user['user_id']}, {"$pop": {'date_logged': 1}})
             await self.db.update_one({"user_id": user['user_id']}, {"$push": {'date_logged': new_time}})
             await self.bot.get_channel(BOT_CHANNEL).send(f"{user['nick']} studied for {delta_time} minutes!")
