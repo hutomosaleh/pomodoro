@@ -66,6 +66,12 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
             document = {"user_id": member.id, 'nick': member.name, 'total_time': 0, 'enter_time': time_now, 'studying': False, 'date_logged': date_log}
             await self.db.insert_one(document)
             user = await self.db.find_one({"user_id": member.id})  # Update user variable
+
+        try:
+            if (before.channel.id in channel_id) & (after.channel.id in channel_id):
+                return
+        except AttributeError:
+            pass
         try:
             if before.channel.id in channel_id:
                 await self.finish_study_session(user)
