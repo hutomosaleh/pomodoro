@@ -90,7 +90,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
         await self.db.update_one({"user_id": id}, {"$set": {'studying': True}})
         await self.db.update_one({"user_id": id}, {"$set": {'topic': "none"}})
 
-        if user and is_new_day:
+        if user and is_new_day(user['enter_time']):
                 await self.db.update_one({"user_id": id}, {"$set": {'total_time_today': 0}})
                 await self.db.update_one({"user_id": id}, {"$push": {'date_logged': [date, 0]}})
 
