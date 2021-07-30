@@ -42,7 +42,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
         elif time in ["minutes", "minute", "min", "mins"]:
             pass
         else:
-            return await ctx.send('Invalid argument')
+            return await ctx.send('Invalid input! | i.e. "< remindme 150 mins"')
         try:
             if duration < 0:
                 await ctx.send('Must be a positive number, please')
@@ -54,7 +54,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
                 await ctx.send(f"{userid} timer's up!")
 
         except ValueError:
-            await ctx.send('Must be a number!')
+            await ctx.send('Must be a number! i.e. "< remindme 150 mins"')
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
