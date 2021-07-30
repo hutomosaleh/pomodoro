@@ -56,6 +56,27 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
         except ValueError:
             await ctx.send('Must be a number! i.e. "< remindme 150 mins"')
 
+    @commands.command(help='Log current study session')
+    async def log(self, ctx, topic:str):
+        user = await self.db.find_one({"user_id": member.id})
+        if user['studying'] is True:
+            # check if day still the same
+            # get last element of array
+            last_session = user['date_logged'][-1]
+            # if just date and time with no topic
+            if length(last_session) == 2:
+                last_session.append(topic)
+                await self.db.update_one({"user_id": user['user_id']}, {"$pop": {'date_logged': 1}})
+                await self.db.update_one({"user_id": user['user_id']}, {"$push": {'date_logged': last_session}})
+            # if last element is another topic
+            else if type(last_session[-2]) == str:
+                # ask if sure (recommend other topic)
+                await ctx.send(f"{user['nick']}, are you sure you want to change study topic from {last_session[-1]} to {topic}?")
+                # wait for input or reaction (10s timer)
+                # calculate time and start new topic
+        else:
+            await ctx.send('You must be in the study room if you want to log your study topic!')
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         user = await self.db.find_one({"user_id": member.id})
