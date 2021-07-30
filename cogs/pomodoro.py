@@ -85,13 +85,12 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
     
     async def start_study_session(self, id):
         user = await self.db.find_one({"user_id": id})
-        time, date = get_time_date()
-        new_day = tz.localize(user['enter_time']).date() < tz.localize(time).date()
 
         await self.db.update_one({"user_id": id}, {"$set": {'enter_time': time}})
         await self.db.update_one({"user_id": id}, {"$set": {'studying': True}})
+        await self.db.update_one({"user_id": id}, {"$set": {'topic': "none"}})
 
-        if user and new_day:
+        if user and is_new_day:
                 await self.db.update_one({"user_id": id}, {"$set": {'total_time_today': 0}})
                 await self.db.update_one({"user_id": id}, {"$push": {'date_logged': [date, 0]}})
 
@@ -113,6 +112,9 @@ def get_time_date():
     date = time.strftime("%m/%d/%Y")
     return (time, date)
 
+def is_new_day(last_time):
+    time, date = get_time_date()
+    return tz.localize(last_time).date() < tz.localize(time).date()
 
 def setup(bot):
     bot.add_cog(PomodoroCog(bot))
