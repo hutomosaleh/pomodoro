@@ -86,14 +86,23 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
             date_log = [[date_now, 0]]
             document = {"user_id": member.id, 'nick': member.name, 'total_time': 0, 'enter_time': time_now, 'studying': False, 'date_logged': date_log}
             await self.db.insert_one(document)
-        if after.channel:
+            user = await self.db.find_one({"user_id": member.id})  # Update user variable
+
+        try:
+            if (before.channel.id in channel_id) & (after.channel.id in channel_id):
+                return
+        except AttributeError:
+            pass
+        try:
+            if before.channel.id in channel_id:
+                await self.finish_study_session(user)
+        except AttributeError:
+            pass
+        try:
             if after.channel.id in channel_id:
                 await self.start_study_session(member.id)
-        else:
-            if before.channel.id in channel_id:
-                user = await self.db.find_one({"user_id": member.id})
-                if user['studying'] is True:
-                    await self.finish_study_session(user)
+        except AttributeError:
+            pass
 
     async def check_vc(self, id):  # channel is ALWAYS empty when starting a bot
         members = self.bot.get_channel(id).members
@@ -122,6 +131,7 @@ class PomodoroCog(commands.Cog, name='Main Commands'):
         new_time[1] += delta_time
         if delta_time > 1:
             await self.db.update_one({"user_id": user['user_id']}, {"$inc": {'total_time': delta_time}})
+            await self.db.update_one({"user_id": user['user_id']}, {"$inc": {'total_time_today': delta_time}})
             await self.db.update_one({"user_id": user['user_id']}, {"$pop": {'date_logged': 1}})
             await self.db.update_one({"user_id": user['user_id']}, {"$push": {'date_logged': new_time}})
             await self.bot.get_channel(BOT_CHANNEL).send(f"{user['nick']} studied for {delta_time} minutes!")
